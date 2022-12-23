@@ -1,0 +1,115 @@
+# Path to target SQLite database
+db_path="/tmp/marmot.db"
+
+# ID to uniquely identify your nodes in your cluster
+# It's recommended to always configure this
+# node_id=1
+
+# Path to persist the saved sequence map on disk for warm reboot
+# If this file is missing Marmot has to download snapshot
+# and replay all logs in order to restore database
+# seq_map_path="/tmp/seq-map.cbor"
+
+# Replication enabled/disabled (default: true)
+# This will allow process to consume incoming changes from NATS
+# replicate = true
+
+# Publishing enabled/disabled (default: true)
+# This will allow process to control publishing of local DB changes to NATS
+# publish = true
+
+# Number of maximum rows to process per change allows configuring the maximum number of rows Marmot
+# will process (scan/load in memory) before publishing to NATS (default: 512)
+# scan_max_changes = 512
+
+# Cleanup interval in milliseconds used to clean up published rows. This is done in order to reduce write
+# load on the system (default: 5000)
+# cleanup_interval = 5000
+
+# Sleep timeout in milliseconds, useful for serverless scenarios. If there is no activity within given timelimit,
+# a snapshot will be performed, and process will exit. Value of 0 means it's disabled (default: 0).
+# sleep_timeout = 15000
+
+# Polling interval in milliseconds, that will explicitly check DB for change logs. This should not be required,
+# it's only useful for broken or buggy file system watchers. Value of 0 means it's disabled (default: 0)
+# polling_interval = 0
+
+# Snapshots are used to limit log size and have a database snapshot backedup on your
+# configured blob storage (NATS for now). This helps speedier recovery or cold boot
+# nodes to come up. A Snapshot is taken every log entries are close to max_entries
+# configured in replication_log section. It's recommended to use a large value
+# for maximum entries in replication log, because SQLite can do 1000s of TPS
+# replaying a couple thousands of entries should be really quick.
+[snapshot]
+# Disabling snapshot disables both restore and save
+enabled=true
+# Storage for snapshot can be "nats" | "s3" (default "nats")
+store="nats"
+
+# When setting snapshot.store to "nats" [snapshot.nats] will be used to configure snapshotting details
+# NATS connection settings (urls etc.) will be loaded from global [nats] configurations
+[snapshot.nats]
+# Number of NATS replicas of snapshot object store (max 5). Recommended values: 2-3
+replicas=1
+# Bucket name for object store to save snapshot on.
+#bucket="custom-bucket-name"
+
+# When setting snapshot.store to "s3" [snapshot.s3] will be used to configure snapshotting details
+[snapshot.s3]
+# Directory path within bucket where snapshot is saved and restore from
+path="snapshots/marmot"
+
+# For S3 this will be `s3.region-code.amazonaws.com` (check your AWS Console for details).
+# For Minio this will point to the host where Minio lives
+endpoint="127.0.0.1:9000"
+
+# By default false but should be set to true depending upong Minio configuration, for S3 it should be
+# always true. This essentially lets you select between https and http for your hosting.
+use_ssl=false
+
+# Access key ID or Minio user name
+#access_key="marmot"
+
+# Secret Key or Minio password
+#secret="ChangeMe"
+
+# Bucket name where snapshots live
+bucket="marmot"
+
+# Change log that is published and persisted in JetStreams by Marmot.
+# Marmot auto-configures missing JetStreams when booting up for you.
+[replication_log]
+# Number of replicas per log to configure (user > 1 for failover and redundancy).
+replicas=1
+# Number of shards to divide the logs over, each JetStream and subject will be prefixed
+# by the configured `subject_prefix` and `stream_prefix` under nats
+shards=1
+# Max log entries JetStream should persist, JetStream is configured to drop older entries
+# Each JetStream is configured to persist on file.
+max_entries=1024
+# Enable log compression, uses zstd to compress logs as they are streamd to NATS
+# This is useful for DB storing large blobs that can be compressed.
+compress=true
+
+
+# NATS server configurations
+[nats]
+# List of NATS server to use as boot server. Reference NATS documentation on how to pass
+# authentication credentials as part of URL.
+urls=[
+    "nats://localhost:4222"
+]
+# Subject prefix used when publishing log entries, it's usually suffixed by shard number
+# to get the full subject name
+subject_prefix="marmot-change-log"
+# JetStream name prefix used for publishing log entries, it's usually suffixed by shard number
+# to get the full JetStream name
+stream_prefix="marmot-changes"
+
+
+# Console STDOUT configurations
+[logging]
+# Configure console logging
+verbose=true
+# "console" | "json"
+format="console"
