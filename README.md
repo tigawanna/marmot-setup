@@ -1,11 +1,11 @@
 # getting started with marmot and pocketbase
 
-> `This will work with any sqlite db since the only pocketbase specifics are the pb_data/data.db
-sqlite file in pocketbase`
+> This will work with any sqlite db since the only pocketbase specifics are the pb_data/data.db
+sqlite file in pocketbase
 
 
 1. ### installation
-> `the most reliable source for the latest + other versions of installations would is repo/releases` 
+> the most reliable source for the latest + other versions of installations would is repo/releases
 
 - pocketbase : https://github.com/pocketbase/pocketbase/releases
 ```ts
