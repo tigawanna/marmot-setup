@@ -236,11 +236,13 @@ at this point we'll add data to pocketbase-1 while leaving pocketbase-2 empty bu
 
 
 then let's bring up marmot-1 and 2 and also show what happens when 1 or 2  stops  wjile te other is still running
+<!-- 
+https://user-images.githubusercontent.com/72096712/209428245-95638f0e-df3f-4532-a785-44b1fba2fcea.mp4 -->
+https://user-images.githubusercontent.com/72096712/209428356-f06b59ca-4215-4b07-8a38-f8c66cc1022e.mp4
 
-<video src='https://youtu.be/kM6HD3Z8t3s' width=180 height=200></video>
 
 
-and finaly we'll set up goreman to run all the commands at once
+and finaly we'll set up goreman to run all the commands at once for extra convenience
 > you might need to adjust the file paths to match your setup
 
 `Procfile`
