@@ -237,7 +237,7 @@ at this point we'll add data to pocketbase-1 while leaving pocketbase-2 empty bu
 
 then let's bring up marmot-1 and 2 and also show what happens when 1 or 2  stops  wjile te other is still running
 
-<video src='https://youtu.be/kM6HD3Z8t3s' width=180/>
+<video src='https://youtu.be/kM6HD3Z8t3s' width=180 height=200></video>
 
 
 and finaly we'll set up goreman to run all the commands at once
